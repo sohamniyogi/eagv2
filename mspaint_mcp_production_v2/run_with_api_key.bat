@@ -7,8 +7,8 @@ echo MSPaint MCP Production v2 - Quick Start
 echo ========================================
 
 REM Set the Google Gemini API key
-set GOOGLE_API_KEY=
-set GEMINI_API_KEY=
+set GOOGLE_API_KEY=GEMINI_API_KEY
+set GEMINI_API_KEY=GEMINI_API_KEY
 
 echo ✅ API Key configured: %GOOGLE_API_KEY:~0,20%...
 

@@ -25,7 +25,7 @@ run_with_api_key.bat
 ```
 
 ## 🔧 What's Configured
-- ✅ **Google Gemini API Key**: ``
+- ✅ **Google Gemini API Key**: `GEMINI_API_KEY`
 - ✅ **Auto-install dependencies**: Flask, pywinauto, google-genai, etc.
 - ✅ **Windows automation**: DPI-aware Paint control
 - ✅ **Logging**: Full request/response logging

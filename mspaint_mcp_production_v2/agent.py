@@ -15,7 +15,7 @@ class GeminiClient:
         
         # Fallback to hardcoded API key if environment variables not set
         if not self.api_key:
-            self.api_key = ""
+            self.api_key = "GEMINI_API_KEY"
             logger.info('Using fallback API key')
         if self.api_key:
             try:
