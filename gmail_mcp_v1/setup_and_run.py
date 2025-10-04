@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Setup and Run Script for Gmail MCP v1
-Sets up Google Gemini API key and Gmail authentication, then runs the demo
+Sets up the .env file and runs the demo
 """
 import os
 import sys
@@ -10,15 +10,47 @@ import threading
 import time
 import json
 
-# Set up the Google Gemini API key
-GOOGLE_API_KEY = "GEMINI_API_KEY"
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    print("⚠️  python-dotenv not installed. Installing...")
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'python-dotenv'])
+    from dotenv import load_dotenv
+    load_dotenv()
+
+# Check if API key is available from .env or environment
+GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY') or os.environ.get('GEMINI_API_KEY')
 
 def setup_environment():
-    """Set up environment variables"""
-    os.environ['GOOGLE_API_KEY'] = GOOGLE_API_KEY
-    os.environ['GEMINI_API_KEY'] = GOOGLE_API_KEY
-    print(f"✅ Set GOOGLE_API_KEY: {GOOGLE_API_KEY[:20]}...")
-    print(f"✅ Set GEMINI_API_KEY: {GOOGLE_API_KEY[:20]}...")
+    """Set up .env file if it doesn't exist"""
+    if not os.path.exists('.env'):
+        print("⚠️  No .env file found!")
+        print("Creating .env file with your API key...")
+        
+        env_content = """# Environment variables for Gmail MCP
+GOOGLE_API_KEY=
+GEMINI_API_KEY=
+"""
+        with open('.env', 'w') as f:
+            f.write(env_content)
+        print("✅ Created .env file with API key")
+        
+        # Reload environment variables
+        load_dotenv()
+        global GOOGLE_API_KEY
+        GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY') or os.environ.get('GEMINI_API_KEY')
+    
+    if GOOGLE_API_KEY:
+        os.environ['GOOGLE_API_KEY'] = GOOGLE_API_KEY
+        os.environ['GEMINI_API_KEY'] = GOOGLE_API_KEY
+        print(f"✅ Set API keys from .env file: {GOOGLE_API_KEY[:20]}...")
+    else:
+        print("❌ No API key found in .env file or environment variables")
+        return False
+    
+    return True
 
 def check_requirements():
     """Check if required packages are installed"""
@@ -116,6 +148,7 @@ def start_agent():
             question = "Send an email to test@example.com with subject 'Hello from AI' and message 'This is a test email from an AI agent!'"
         
         print(f"🎯 Agent task: {question}")
+        print("⏳ Note: Gmail authentication may take 1-2 minutes on first run...")
         session = agent.run_agent(question, 'http://127.0.0.1:5001', 'gmail_session.json')
         
         print("✅ Agent execution completed!")
@@ -137,7 +170,9 @@ def main():
     print("=" * 60)
     
     # Setup environment
-    setup_environment()
+    if not setup_environment():
+        print("❌ Failed to setup environment variables")
+        return
     
     # Check requirements
     if not check_requirements():
