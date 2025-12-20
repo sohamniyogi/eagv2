@@ -90,20 +90,20 @@ A novel hybrid AI system for bird identification combining multiple approaches f
 
 ## 🚀 Quick Start
 
-### Option 1: Cloud Hosting (Permanent, Free, Auto-Deploy via Docker)
+### Option 1: Cloud Hosting (FREE, Permanent, Auto-Deploy)
 
-Deploy to **Render.com** - free Docker hosting with auto-deploy on Git push:
+Deploy to **Render.com** with **Groq API** (100% FREE, no credit card):
 
 ```bash
 ./deploy.sh cloud   # Shows step-by-step instructions
 ```
 
-**Quick Setup:**
-1. Get free API key at https://together.ai
+**5-Minute Setup:**
+1. Get **FREE** API key at https://console.groq.com (no credit card!)
 2. Go to https://render.com → New → Web Service
-3. Connect GitHub repo, select Docker runtime
-4. Add env var: `TOGETHER_API_KEY`
-5. Deploy! Auto-refreshes on every git push.
+3. Connect GitHub repo: `sohamniyogi/eagv2`, Root: `birdsense`, Runtime: Docker
+4. Add env var: `GROQ_API_KEY` (your free Groq key)
+5. Deploy! **Auto-refreshes on every git push.**
 
 ### Option 2: Local with GPU (Best Accuracy)
 
@@ -153,8 +153,7 @@ python app.py
 
 ```
 birdsense/
-├── app.py              # Local version (Ollama + BirdNET) - best accuracy
-├── app_cloud.py        # Cloud version (Together/Replicate API)
+├── app.py              # Single codebase (auto-detects Ollama or Groq)
 ├── prompts.py          # External LLM prompts
 ├── confusion_rules.py  # Feature-based validation
 ├── feedback.py         # Feedback & analytics collection
@@ -164,17 +163,17 @@ birdsense/
 ├── docker-compose.yml  # Multi-container setup
 ├── render.yaml         # Render.com auto-deploy config
 ├── requirements.txt    # Local dependencies (with BirdNET)
-├── requirements_cloud.txt  # Cloud dependencies (lightweight)
+├── requirements_cloud.txt  # Docker dependencies (lightweight)
 ├── .github/workflows/  # Auto-deploy on GitHub push
 └── README.md           # This file
 ```
 
-### Two Versions:
+### Single Codebase - Auto-Detects Runtime:
 
-| Version | File | Models | Best For |
-|---------|------|--------|----------|
-| **Local** | `app.py` | Ollama + BirdNET | Best accuracy, GPU |
-| **Cloud** | `app_cloud.py` | Together AI API | Free hosting, sharing |
+| Mode | Detection | Models | Best For |
+|------|-----------|--------|----------|
+| **Local** | Ollama running | LLaVA + phi4 + BirdNET | Best accuracy |
+| **Cloud** | GROQ_API_KEY set | Llama 3.2 Vision | FREE hosting |
 
 ## 🔧 Technology Stack
 
