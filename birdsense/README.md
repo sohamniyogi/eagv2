@@ -121,20 +121,30 @@ BirdSense introduces a **novel multi-stage hybrid architecture** that combines s
 birdsense/
 ├── app.py              # Gradio UI (clean, minimal)
 ├── providers.py        # LLM Provider Factory Pattern
-│                       # ├── OllamaProvider (local)
-│                       # ├── OpenAIProvider (public API)
-│                       # └── AzureOpenAIProvider (enterprise)
 ├── analysis.py         # Bird Identification Logic
-│                       # ├── SAMAudio (source separation)
-│                       # ├── BirdNET integration
-│                       # ├── Feature extraction
-│                       # └── Result formatting
 ├── prompts.py          # Model-specific prompts
 ├── confusion_rules.py  # Feature validation hints
 ├── feedback.py         # User feedback collection
 ├── requirements.txt    # Python dependencies
 ├── Dockerfile          # Cloud deployment
-└── .env               # Local configuration (gitignored)
+├── .env               # Local configuration (gitignored)
+│
+├── api/               # REST API (FastAPI)
+│   ├── main.py        # API server entry point
+│   ├── routes/        # API endpoints
+│   │   ├── auth_routes.py      # JWT authentication
+│   │   └── identify_routes.py  # Bird identification
+│   ├── auth/          # JWT handler
+│   └── models/        # Pydantic schemas
+│
+└── mobile/            # React Native Expo App
+    ├── app/           # Expo Router screens
+    │   ├── (tabs)/    # Tab navigation
+    │   └── login.tsx  # Authentication
+    └── src/
+        ├── services/  # API client
+        ├── context/   # Auth context
+        └── components/# Reusable UI
 ```
 
 ---
@@ -199,6 +209,86 @@ python app.py
 ```
 
 Open **http://localhost:7860** in your browser.
+
+---
+
+## 🔌 REST API
+
+BirdSense includes a FastAPI-based REST API for programmatic access.
+
+### Run API Server
+
+```bash
+cd birdsense
+source venv/bin/activate
+uvicorn api.main:app --reload --port 8000
+```
+
+**Swagger UI**: http://localhost:8000/docs  
+**ReDoc**: http://localhost:8000/redoc
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/auth/login` | Get JWT token |
+| `GET` | `/auth/me` | Get current user |
+| `POST` | `/identify/audio` | Upload audio file |
+| `POST` | `/identify/audio/base64` | Base64 audio |
+| `POST` | `/identify/image` | Upload image file |
+| `POST` | `/identify/image/base64` | Base64 image |
+| `POST` | `/identify/description` | Text description |
+
+### Authentication
+
+Default users:
+
+| Username | Password |
+|----------|----------|
+| `admin` | `` |
+| `demo` | `` |
+| `soham` | `` |
+
+### Postman Collection
+
+Import `api/BirdSense_API.postman_collection.json` into Postman for ready-to-use requests.
+
+---
+
+## 📱 Mobile App (React Native)
+
+A cross-platform mobile app built with Expo.
+
+### Run Mobile App
+
+```bash
+cd birdsense/mobile
+
+# Install dependencies
+npm install
+
+# Start Expo
+npm start
+
+# Scan QR code with Expo Go app
+```
+
+### Features
+
+- 🎵 **Audio Recording** - Record and identify bird calls
+- 📷 **Camera/Gallery** - Take or select bird photos
+- 📝 **Description** - Text-based identification
+- 🔐 **Authentication** - JWT-based login
+
+### Configure API URL
+
+Edit `mobile/src/services/api.ts`:
+
+```typescript
+const API_CONFIG = {
+  BASE_URL: 'https://your-deployed-api.run.app',
+};
+```
 
 ---
 
@@ -336,10 +426,13 @@ result = client.predict(
 
 | Component | Technology |
 |-----------|------------|
-| **UI Framework** | Gradio 4.x |
+| **Web UI** | Gradio 4.x |
+| **REST API** | FastAPI + Uvicorn |
+| **Mobile App** | React Native (Expo) |
 | **Audio Analysis** | BirdNET (TensorFlow), scipy, librosa |
 | **Vision Models** | LLaVA 7B, GPT-4o |
 | **Text Models** | phi4 14B, GPT-4o |
+| **Authentication** | JWT (python-jose, passlib) |
 | **Image Sources** | Wikipedia, Wikimedia Commons, iNaturalist |
 | **Containerization** | Docker |
 | **Cloud Platform** | Google Cloud Run |
@@ -376,7 +469,13 @@ print(f"Image URL: {url}")  # Should return Wikipedia image
 
 ## 🔄 Recent Updates
 
-### v5.0 (Latest)
+### v6.0 (Latest)
+- ✅ **REST API** - FastAPI endpoints with Swagger docs
+- ✅ **Mobile App** - React Native Expo app
+- ✅ **JWT Authentication** - Secure API access
+- ✅ **Postman Collection** - Ready-to-use API tests
+
+### v5.0
 - ✅ **Multi-bird audio detection** via SAM-Audio frequency separation
 - ✅ **Fixed bird image fetching** using scientific names
 - ✅ **India-specific information** always included
@@ -384,10 +483,12 @@ print(f"Image URL: {url}")  # Should return Wikipedia image
 - ✅ **Refactored architecture** with Factory Pattern
 - ✅ **Azure OpenAI support** for enterprise deployment
 
-### Architecture Improvements
+### Architecture
 - `providers.py` - Clean LLM backend abstraction
 - `analysis.py` - Separated identification logic
 - `prompts.py` - Externalized all LLM prompts
+- `api/` - REST API with Factory Pattern
+- `mobile/` - Cross-platform mobile app
 
 ---
 
