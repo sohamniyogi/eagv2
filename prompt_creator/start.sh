@@ -2,26 +2,23 @@
 # ============================================
 # Prompt Creator - Quick Start Script
 # ============================================
+# Configuration is loaded from .env file
 
 # Change to script directory
 cd "$(dirname "$0")"
 
-# Zycus Azure OpenAI Configuration
-export AZURE_OPENAI_API_KEY="********"
-export AZURE_OPENAI_ENDPOINT="https://your-apim.azure-api.net/your-deployment"
-export AZURE_OPENAI_DEPLOYMENT="gpt4o-130524"
-export AZURE_OPENAI_API_VERSION="2024-02-15-preview"
-export AZURE_OPENAI_VERIFY_SSL="false"
-export LLM_PROVIDER="azure_openai"
-export LLM_MODEL="gpt-4o"
+echo "============================================"
+echo "Prompt Creator"
+echo "============================================"
 
-echo "============================================"
-echo "Prompt Creator - Starting with Azure OpenAI"
-echo "============================================"
-echo "Endpoint: $AZURE_OPENAI_ENDPOINT"
-echo "Deployment: $AZURE_OPENAI_DEPLOYMENT"
-echo "API Version: $AZURE_OPENAI_API_VERSION"
-echo ""
+# Check for .env file
+if [ -f ".env" ]; then
+    echo "✅ Found .env file - credentials will be loaded automatically"
+else
+    echo "⚠️  No .env file found!"
+    echo "   Copy env_template.txt to .env and add your API key"
+    exit 1
+fi
 
 # Activate virtual environment
 source venv/bin/activate
@@ -30,6 +27,7 @@ source venv/bin/activate
 lsof -ti:7860 | xargs kill -9 2>/dev/null || true
 
 # Run the application
-echo "🚀 Opening UI at http://localhost:7860"
+echo ""
+echo "🚀 Starting UI at http://localhost:7860"
 python main.py "$@"
 
