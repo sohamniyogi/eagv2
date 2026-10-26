@@ -31,3 +31,17 @@ devflow-multiagent/__pycache__/*
 
 browser_agent/LINKEDIN_POST.md
 birdsense/benchmark_*.json
+
+# Secrets / local artifacts (security remediation)
+*.pyc
+__pycache__/
+.env
+.env.*
+!.env.example
+!*.env.example
+/carbonlens/assets/cursor-team-analytics-monthly-2025-09-24.csv
+/carbonlens/backend/.env
+/gmail_mcp_v1/credentials.json
+/gmail_mcp_v1/gmail_session.json
+/gmail_mcp_v1/llm_gmail_session.json
+/mspaint_mcp_production_v2/llm_session.json
