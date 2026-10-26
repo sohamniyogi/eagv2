@@ -20,7 +20,7 @@ const CREDENTIALS_KEY = 'birdsense_credentials';
 // Default demo credentials for API
 const DEFAULT_API_CREDENTIALS = {
   username: 'demo',
-  password: ''
+  password: process.env.EXPO_PUBLIC_BIRDSENSE_DEMO_PASSWORD ?? ''
 };
 
 export interface UserInfo {

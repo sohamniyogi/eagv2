@@ -6,6 +6,7 @@ JWT-based authentication for the REST API.
 """
 
 import os
+import secrets
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
@@ -15,8 +16,8 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 # ============ CONFIG ============
 
-# Secret key - in production, use environment variable
-SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "")
+# Secret key - set JWT_SECRET_KEY; falls back to a random per-process key
+SECRET_KEY = os.environ.get("JWT_SECRET_KEY") or secrets.token_urlsafe(32)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
 
@@ -30,24 +31,30 @@ security = HTTPBearer()
 # ============ DEFAULT USERS ============
 # In production, use a proper database
 
+def _hash_env_password(var: str) -> Optional[str]:
+    """Hash a password from the environment; unset means the user cannot log in."""
+    password = os.environ.get(var)
+    return pwd_context.hash(password) if password else None
+
+
 USERS_DB = {
     "admin": {
         "username": "admin",
-        "hashed_password": pwd_context.hash(""),
+        "hashed_password": _hash_env_password("BIRDSENSE_ADMIN_PASSWORD"),
         "email": "user@example.com",
         "full_name": "Admin Admin",
         "is_active": True
     },
     "demo": {
         "username": "demo",
-        "hashed_password": pwd_context.hash(""),
+        "hashed_password": _hash_env_password("BIRDSENSE_DEMO_PASSWORD"),
         "email": "demo@birdsense.app",
         "full_name": "Demo User",
         "is_active": True
     },
     "soham": {
         "username": "soham",
-        "hashed_password": pwd_context.hash(""),
+        "hashed_password": _hash_env_password("BIRDSENSE_SOHAM_PASSWORD"),
         "email": "soham@birdsense.app",
         "full_name": "Soham (Developer)",
         "is_active": True
@@ -79,7 +86,7 @@ def authenticate_user(username: str, password: str) -> Optional[dict]:
     user = get_user(username)
     if not user:
         return None
-    if not verify_password(password, user["hashed_password"]):
+    if not user["hashed_password"] or not verify_password(password, user["hashed_password"]):
         return None
     return user
 

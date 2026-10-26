@@ -8,9 +8,6 @@ import os
 import sys
 from pathlib import Path
 
-# Set Gemini API key
-os.environ["GEMINI_API_KEY"] = ""
-
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent))
 
